@@ -45,6 +45,7 @@ class _BottomOverviewScreenState extends State<BottomOverviewScreen> {
     return Scaffold(
       body: _getCurrentPage(),
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 20,
         currentIndex: _selectedPageIndex,
         selectedItemColor: themeConst.primaryColor,
         type: BottomNavigationBarType.fixed,
