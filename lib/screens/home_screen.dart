@@ -1,3 +1,4 @@
+import 'package:chito_shopping/screens/product/product_list_screen.dart';
 import 'package:chito_shopping/widgets/home_carousel_widget.dart';
 import 'package:chito_shopping/widgets/product_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -121,7 +122,12 @@ class HomeScreen extends StatelessWidget {
               SizedBox(
                 height: mHeight * 0.03,
               ),
-              _getTitleWidget(title: "Flash Sale", onPress: () {}),
+              _getTitleWidget(
+                  title: "Flash Sale",
+                  onPress: () {
+                    Navigator.pushNamed(context, ProductListScreen.routeName,
+                        arguments: "Flash Sale");
+                  }),
               Container(
                 height: mHeight * 0.22,
                 child: ListView(
@@ -152,7 +158,12 @@ class HomeScreen extends StatelessWidget {
               SizedBox(
                 height: mHeight * 0.02,
               ),
-              _getTitleWidget(title: "New Product", onPress: () {}),
+              _getTitleWidget(
+                  title: "New Product",
+                  onPress: () {
+                    Navigator.pushNamed(context, ProductListScreen.routeName,
+                        arguments: "New Product");
+                  }),
               Container(
                 height: mHeight * 0.22,
                 child: ListView(
