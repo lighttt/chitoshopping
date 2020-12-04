@@ -16,21 +16,20 @@ class MyApp extends StatelessWidget {
       title: 'Chito Shopping',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color(0xFFF77866),
+        primaryColor: Colors.redAccent.shade200,
+        primaryColorLight: Colors.redAccent.shade200,
+        primaryColorDark: Colors.redAccent.shade200,
         accentColor: Color(0xFFF7B733),
         canvasColor: Colors.white,
         fontFamily: "Montserrat",
         appBarTheme: AppBarTheme(
           elevation: 0,
-          color: Colors.white,
-          iconTheme: IconThemeData(
-            color: Color(0xFFF77866),
-          ),
+          iconTheme: IconThemeData(color: Colors.white),
           textTheme: TextTheme(
               headline6: TextStyle(
                   fontFamily: "Montserrat",
                   fontWeight: FontWeight.w600,
-                  color: blackColor,
+                  color: Colors.white,
                   fontSize: 24)),
         ),
       ),

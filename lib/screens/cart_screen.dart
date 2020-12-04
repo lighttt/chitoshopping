@@ -20,12 +20,6 @@ class CartScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("My Cart",
-                style: themeConst.textTheme.headline5
-                    .copyWith(fontWeight: FontWeight.w600, fontSize: 26)),
-            SizedBox(
-              height: 20,
-            ),
             Column(
               children: _cartList.map((e) {
                 return CartItem(

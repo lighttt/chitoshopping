@@ -19,7 +19,8 @@ class HomeScreen extends StatelessWidget {
         Container(
             height: mHeight * 0.07,
             width: mWidth * 0.15,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding:
+                const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 10),
             decoration: BoxDecoration(
                 gradient: LinearGradient(
                     colors: [color.withOpacity(0.7), color],
@@ -75,7 +76,7 @@ class HomeScreen extends StatelessWidget {
     themeConst = Theme.of(context);
     return SafeArea(
       child: Container(
-        margin: const EdgeInsets.only(top: 25),
+        padding: const EdgeInsets.only(top: 20),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
