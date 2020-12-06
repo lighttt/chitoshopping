@@ -1,6 +1,7 @@
+import 'package:chito_shopping/provider/products_provider.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const String routeName = "/product_detail_screen";
@@ -35,88 +36,102 @@ class ProductDetailScreen extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final mHeight = mediaQuery.size.height;
     themeConst = Theme.of(context);
+    final id = ModalRoute.of(context).settings.arguments as String;
+    final loadedProduct = Provider.of<Products>(context).findProductById(id);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Shoes"),
+        title: Text(
+          loadedProduct.title,
+        ),
       ),
       body: ListView(
         children: [
           Image.network(
-            "https://assets.ajio.com/medias/sys_master/root/ajio/catalog/5ef38fcbf997dd433b43d714/-473Wx593H-461205998-black-MODEL.jpg",
+            loadedProduct.imageURL,
             height: mHeight * 0.4,
             fit: BoxFit.contain,
           ),
           ListTile(
             title: Text(
-              "Rs. 1500",
+              "Rs. ${loadedProduct.price}",
               style: themeConst.textTheme.headline5
                   .copyWith(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text("Goldstar Shoes Blue JX123",
-                style: themeConst.textTheme.subtitle1),
+            contentPadding: const EdgeInsets.all(18),
+            subtitle: Text(loadedProduct.title,
+                style: themeConst.textTheme.subtitle1.copyWith(fontSize: 18)),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.star, color: themeConst.accentColor),
+                    Icon(
+                      Icons.star,
+                      color: themeConst.accentColor,
+                      size: 30,
+                    ),
                     SizedBox(
                       width: 1,
                     ),
-                    Text("4.5"),
+                    Text(loadedProduct.rating,
+                        style: themeConst.textTheme.subtitle1
+                            .copyWith(fontSize: 18)),
                   ],
                 ),
                 SizedBox(
                   width: 5,
                 ),
-                Row(
-                  children: [
-                    Icon(Icons.favorite, color: themeConst.primaryColor),
-                    SizedBox(
-                      width: 1,
-                    ),
-                    Text("100"),
-                  ],
+                IconButton(
+                  padding: const EdgeInsets.all(0),
+                  icon: Icon(
+                    loadedProduct.isFavourite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    size: 30,
+                  ),
+                  color: themeConst.primaryColor,
+                  onPressed: () {},
                 )
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: Text(
-              "Size",
-              style: themeConst.textTheme.headline6
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _sizeChips(
-                title: "S",
-                color: Colors.orange[200],
-              ),
-              _sizeChips(
-                title: "M",
-                color: Colors.pink[200],
-              ),
-              _sizeChips(
-                title: "L",
-                color: Colors.lightBlue[200],
-              ),
-              _sizeChips(
-                title: "XL",
-                color: Colors.green[200],
-              ),
-            ],
-          ),
+          loadedProduct.category == "Electronics"
+              ? Container()
+              : Padding(
+                  padding: const EdgeInsets.only(
+                      left: 16.0, right: 16, top: 0, bottom: 10),
+                  child: Text(
+                    "Size",
+                    style: themeConst.textTheme.headline6
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+          loadedProduct.category == "Electronics"
+              ? Container()
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _sizeChips(
+                      title: "S",
+                      color: Colors.orange[200],
+                    ),
+                    _sizeChips(
+                      title: "M",
+                      color: Colors.pink[200],
+                    ),
+                    _sizeChips(
+                      title: "L",
+                      color: Colors.lightBlue[200],
+                    ),
+                    _sizeChips(
+                      title: "XL",
+                      color: Colors.green[200],
+                    ),
+                  ],
+                ),
           _detailTiles(
-            title: "Brand",
-            desc: "GoldStar",
-          ),
-          _detailTiles(
-            title: "Category",
-            desc: "Men Shoes",
+            title: "Description",
+            desc: loadedProduct.description,
           ),
           Padding(
             padding: const EdgeInsets.only(

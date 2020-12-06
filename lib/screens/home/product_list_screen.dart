@@ -1,7 +1,8 @@
+import 'package:chito_shopping/provider/products_provider.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:chito_shopping/widgets/product_item.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ProductListScreen extends StatelessWidget {
   static const String routeName = "/product_list_screen";
@@ -10,6 +11,10 @@ class ProductListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeConst = Theme.of(context);
     final title = ModalRoute.of(context).settings.arguments as String;
+    final productsProvider = Provider.of<Products>(context);
+    final loadedProducts = title == "Flash Sale"
+        ? productsProvider.flashSaleProducts
+        : productsProvider.newProducts;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -25,18 +30,16 @@ class ProductListScreen extends StatelessWidget {
         ],
       ),
       body: GridView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 1 / 1.5,
               crossAxisSpacing: 5,
               mainAxisSpacing: 10),
-          itemCount: 12,
+          itemCount: loadedProducts.length,
           itemBuilder: (ctx, index) {
             return ProductItem(
-              title: "Shoes",
-              price: 2000,
-              imgUrl:
-                  "https://assets.ajio.com/medias/sys_master/root/ajio/catalog/5ef38fcbf997dd433b43d714/-473Wx593H-461205998-black-MODEL.jpg",
+              id: loadedProducts[index].id,
             );
           }),
     );

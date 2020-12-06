@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'favourites_screen.dart';
+
 class ProfileScreen extends StatelessWidget {
   ThemeData themeConst;
   double mHeight, mWidth;
@@ -84,6 +86,9 @@ class ProfileScreen extends StatelessWidget {
           thickness: 2,
         ),
         ListTile(
+          onTap: () {
+            Navigator.pushNamed(context, FavouritesScreen.routeName);
+          },
           leading: Icon(
             FontAwesomeIcons.solidHeart,
             color: Colors.blue.shade600,

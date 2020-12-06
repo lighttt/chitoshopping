@@ -1,10 +1,11 @@
-import 'package:chito_shopping/screens/home_screen.dart';
-import 'package:chito_shopping/screens/user_product_screen.dart';
-import 'package:chito_shopping/screens/profile_screen.dart';
+import 'package:chito_shopping/model/product.dart';
+import 'file:///D:/Flutter%20Projects/Samip/chito_shopping/lib/screens/home/home_screen.dart';
+import 'file:///D:/Flutter%20Projects/Samip/chito_shopping/lib/screens/user_product/user_product_screen.dart';
+import 'file:///D:/Flutter%20Projects/Samip/chito_shopping/lib/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'cart_screen.dart';
+import 'cart/cart_screen.dart';
 
 class BottomOverviewScreen extends StatefulWidget {
   static const String routeName = "/bottom_overview_screen";

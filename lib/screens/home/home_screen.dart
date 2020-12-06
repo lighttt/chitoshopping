@@ -1,9 +1,10 @@
-import 'package:chito_shopping/screens/product/product_list_screen.dart';
+import 'package:chito_shopping/provider/products_provider.dart';
+import 'package:chito_shopping/screens/home/product_list_screen.dart';
 import 'package:chito_shopping/widgets/home_carousel_widget.dart';
 import 'package:chito_shopping/widgets/product_item.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   ThemeData themeConst;
@@ -74,6 +75,9 @@ class HomeScreen extends StatelessWidget {
     mHeight = mediaConst.size.height;
     mWidth = mediaConst.size.width;
     themeConst = Theme.of(context);
+    final productsProvider = Provider.of<Products>(context);
+    final flashSales = productsProvider.flashSaleProducts;
+    final newSales = productsProvider.newProducts;
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.only(top: 20),
@@ -131,29 +135,15 @@ class HomeScreen extends StatelessWidget {
                   }),
               Container(
                 height: mHeight * 0.22,
-                child: ListView(
+                child: ListView.builder(
                   padding: const EdgeInsets.all(10),
                   scrollDirection: Axis.horizontal,
-                  children: [
-                    ProductItem(
-                      title: "Shirt",
-                      price: 1500,
-                      imgUrl:
-                          "https://www.fashionbug.lk/wp-content/uploads/2020/01/080201606669-C2_Formal-Shirt-2_Fashion-Bug.jpg",
-                    ),
-                    ProductItem(
-                      title: "Pant",
-                      price: 1800,
-                      imgUrl:
-                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkWMvIAG8Tm23dlrAmesX_UJ2vcDoPxbIDfg&usqp=CAU",
-                    ),
-                    ProductItem(
-                      title: "Shoes",
-                      price: 2000,
-                      imgUrl:
-                          "https://assets.ajio.com/medias/sys_master/root/ajio/catalog/5ef38fcbf997dd433b43d714/-473Wx593H-461205998-black-MODEL.jpg",
-                    ),
-                  ],
+                  itemCount: flashSales.length,
+                  itemBuilder: (ctx, index) {
+                    return ProductItem(
+                      id: flashSales[index].id,
+                    );
+                  },
                 ),
               ),
               SizedBox(
@@ -167,29 +157,15 @@ class HomeScreen extends StatelessWidget {
                   }),
               Container(
                 height: mHeight * 0.22,
-                child: ListView(
+                child: ListView.builder(
                   padding: const EdgeInsets.all(10),
                   scrollDirection: Axis.horizontal,
-                  children: [
-                    ProductItem(
-                      title: "Santizer",
-                      price: 150,
-                      imgUrl:
-                          "https://img.my-best.in/press_eye_catches/55edb55bf88bb49f81f55e0e33e64b6e.jpg",
-                    ),
-                    ProductItem(
-                      title: "JBL Speakers",
-                      price: 1500,
-                      imgUrl:
-                          "https://target.scene7.com/is/image/Target/GUEST_199cec2b-f33d-4ef0-a7cd-d3e22b42f0fe?wid=488&hei=488&fmt=pjpeg",
-                    ),
-                    ProductItem(
-                      title: "Google Home",
-                      price: 5000,
-                      imgUrl:
-                          "https://i5.walmartimages.com/asr/a55c9d64-74bb-4706-9a7e-12b012c98fa6.3dc3a5b67256ba156e1c40a865f8eea2.jpeg?odnHeight=2000&odnWidth=2000&odnBg=ffffff",
-                    ),
-                  ],
+                  itemCount: newSales.length,
+                  itemBuilder: (ctx, index) {
+                    return ProductItem(
+                      id: newSales[index].id,
+                    );
+                  },
                 ),
               ),
             ],
