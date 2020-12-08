@@ -15,7 +15,8 @@ class ProductItem extends StatelessWidget {
     double mHeight = mediaQuery.size.height;
     double mWidth = mediaQuery.size.width;
     ThemeData themeData = Theme.of(context);
-    final loadedProduct = Provider.of<Products>(context).findProductById(id);
+    final loadedProduct =
+        Provider.of<Products>(context, listen: false).findProductById(id);
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, ProductDetailScreen.routeName,

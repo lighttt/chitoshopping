@@ -1,3 +1,4 @@
+import 'package:chito_shopping/provider/cart_provider.dart';
 import 'package:chito_shopping/provider/products_provider.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,8 @@ class ProductDetailScreen extends StatelessWidget {
     final mHeight = mediaQuery.size.height;
     themeConst = Theme.of(context);
     final id = ModalRoute.of(context).settings.arguments as String;
-    final loadedProduct = Provider.of<Products>(context).findProductById(id);
+    final provider = Provider.of<Products>(context, listen: false);
+    final loadedProduct = provider.findProductById(id);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -81,16 +83,22 @@ class ProductDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: 5,
                 ),
-                IconButton(
-                  padding: const EdgeInsets.all(0),
-                  icon: Icon(
-                    loadedProduct.isFavourite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    size: 30,
-                  ),
-                  color: themeConst.primaryColor,
-                  onPressed: () {},
+                Consumer<Products>(
+                  builder: (ctx, product, child) {
+                    return IconButton(
+                      padding: const EdgeInsets.all(0),
+                      icon: Icon(
+                        loadedProduct.isFavourite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        size: 30,
+                      ),
+                      color: themeConst.primaryColor,
+                      onPressed: () {
+                        provider.toggleFavourite(id);
+                      },
+                    );
+                  },
                 )
               ],
             ),
@@ -143,7 +151,10 @@ class ProductDetailScreen extends StatelessWidget {
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 color: themeConst.primaryColor,
                 textColor: Colors.white,
-                onPressed: () {},
+                onPressed: () {
+                  Provider.of<Cart>(context, listen: false)
+                      .addToCart(id, loadedProduct.title, loadedProduct.price);
+                },
                 icon: Icon(Icons.shopping_cart),
                 label: Text("Add to Cart")),
           )

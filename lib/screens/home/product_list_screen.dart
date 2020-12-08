@@ -11,7 +11,7 @@ class ProductListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeConst = Theme.of(context);
     final title = ModalRoute.of(context).settings.arguments as String;
-    final productsProvider = Provider.of<Products>(context);
+    final productsProvider = Provider.of<Products>(context, listen: false);
     final loadedProducts = title == "Flash Sale"
         ? productsProvider.flashSaleProducts
         : productsProvider.newProducts;

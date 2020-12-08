@@ -1,5 +1,29 @@
-import 'package:chito_shopping/model/product.dart';
 import 'package:flutter/material.dart';
+
+import 'package:flutter/foundation.dart';
+
+class Product with ChangeNotifier {
+  final String id;
+  final String title;
+  final String imageURL;
+  final String description;
+  final String rating;
+  final double price;
+  final String type;
+  final String category;
+  bool isFavourite;
+
+  Product(
+      {@required this.id,
+      @required this.type,
+      @required this.category,
+      @required this.title,
+      @required this.description,
+      @required this.rating,
+      @required this.price,
+      @required this.imageURL,
+      this.isFavourite = false});
+}
 
 class Products with ChangeNotifier {
   List<Product> _products = [
@@ -11,7 +35,6 @@ class Products with ChangeNotifier {
         description: "The best watch you will ever find.",
         imageURL:
             "https://www.surfstitch.com/on/demandware.static/-/Sites-ss-master-catalog/default/dwef31ef54/images/MBB-M43BLK/BLACK-WOMENS-ACCESSORIES-ROSEFIELD-WATCHES-MBB-M43BLK_1.JPG",
-        isFavourite: false,
         rating: "4.5",
         type: "Flash"),
     Product(
@@ -22,7 +45,6 @@ class Products with ChangeNotifier {
         description: "Quality and comfort shoes with fashionable style.",
         imageURL:
             "https://assets.adidas.com/images/w_600,f_auto,q_auto:sensitive,fl_lossy/e06ae7c7b4d14a16acb3a999005a8b6a_9366/Lite_Racer_RBN_Shoes_White_F36653_01_standard.jpg",
-        isFavourite: false,
         rating: "4",
         type: "Flash"),
     Product(
@@ -33,7 +55,6 @@ class Products with ChangeNotifier {
         description: "The compact and powerful gaming laptop under the budget.",
         imageURL:
             "https://d4kkpd69xt9l7.cloudfront.net/sys-master/images/h57/hdd/9010331451422/razer-blade-pro-hero-mobile.jpg",
-        isFavourite: false,
         rating: "3.5",
         type: "New"),
     Product(
@@ -44,7 +65,6 @@ class Products with ChangeNotifier {
         description: "A red color tshirt you can wear at any occassion.",
         imageURL:
             "https://5.imimg.com/data5/LM/NA/MY-49778818/mens-round-neck-t-shirt-500x500.jpg",
-        isFavourite: false,
         rating: "3.5",
         type: "New"),
   ];
@@ -72,5 +92,12 @@ class Products with ChangeNotifier {
   // Find product by id
   Product findProductById(String id) {
     return _products.firstWhere((prod) => prod.id == id);
+  }
+
+  // toggle favourites
+  void toggleFavourite(String id) {
+    Product toggleProduct = _products.firstWhere((prod) => prod.id == id);
+    toggleProduct.isFavourite = !toggleProduct.isFavourite;
+    notifyListeners();
   }
 }

@@ -1,6 +1,8 @@
+import 'package:chito_shopping/provider/cart_provider.dart' show Cart;
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:chito_shopping/widgets/cart_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
   ThemeData themeConst;
@@ -13,6 +15,8 @@ class CartScreen extends StatelessWidget {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     mHeight = mediaQueryData.size.height;
     mWidth = mediaQueryData.size.width;
+    final cartProvider = Provider.of<Cart>(context);
+    final cartMap = cartProvider.items;
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -20,12 +24,12 @@ class CartScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              children: _cartList.map((e) {
-                return CartItem(
-                  id: e,
-                );
-              }).toList(),
+            Container(
+              height: mHeight * 0.7,
+              child: ListView.builder(
+                itemBuilder: (context, i) => CartItem(id: "first"),
+                itemCount: cartProvider.totalCount,
+              ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 10),

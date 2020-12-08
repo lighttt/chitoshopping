@@ -5,6 +5,7 @@ import 'package:chito_shopping/screens/profile/favourites_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'provider/cart_provider.dart';
 import 'provider/products_provider.dart';
 
 void main() {
@@ -15,10 +16,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) {
-        return Products();
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (BuildContext context) {
+          return Products();
+        }),
+        ChangeNotifierProvider(create: (BuildContext context) {
+          return Cart();
+        }),
+      ],
       child: MaterialApp(
         title: 'Chito Shopping',
         debugShowCheckedModeBanner: false,
