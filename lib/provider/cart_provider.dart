@@ -50,4 +50,47 @@ class Cart with ChangeNotifier {
   int get totalCount {
     return _items == null ? 0 : _items.length;
   }
+
+  //remove a single item from cart
+  void removeSingleItem(String cartId) {
+    if (!_items.containsKey(cartId)) {
+      return;
+    }
+    if (_items[cartId].quantity > 1) {
+      _items.update(
+          cartId,
+          (existingCartItem) => CartItem(
+              id: existingCartItem.id,
+              title: existingCartItem.title,
+              price: existingCartItem.price,
+              quantity: existingCartItem.quantity - 1));
+    } else {
+      _items.remove(cartId);
+    }
+    notifyListeners();
+  }
+
+  //total amount of the cart
+  double get totalAmount {
+    double total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.price * cartItem.quantity;
+    });
+    return total;
+  }
+
+  // remove a item from cart
+  void removeItem(String cartId) {
+    if (!_items.containsKey(cartId)) {
+      return;
+    }
+    _items.remove(cartId);
+    notifyListeners();
+  }
+
+  //clear cart
+  void clearCart() {
+    _items = {};
+    notifyListeners();
+  }
 }

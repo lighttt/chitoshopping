@@ -1,12 +1,18 @@
+import 'package:chito_shopping/provider/cart_provider.dart' show Cart;
+import 'package:chito_shopping/provider/products_provider.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CartItem extends StatelessWidget {
   ThemeData themeConst;
   double mHeight, mWidth;
 
   final String id;
-  CartItem({@required this.id});
+  final String title;
+  final int quantity;
+  final String cartId;
+  CartItem({@required this.id, this.title, this.quantity, this.cartId});
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +20,14 @@ class CartItem extends StatelessWidget {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
     mHeight = mediaQueryData.size.height;
     mWidth = mediaQueryData.size.width;
+    final loadedProduct =
+        Provider.of<Products>(context, listen: false).findProductById(cartId);
+    final cartProvider = Provider.of<Cart>(context, listen: false);
     return Dismissible(
       key: ValueKey(id),
       direction: DismissDirection.endToStart,
       background: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 20),
         padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
         color: Colors.red,
         child: Row(
@@ -30,75 +40,91 @@ class CartItem extends StatelessWidget {
           ],
         ),
       ),
-      onDismissed: (direction) {},
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 4,
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 3,
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12)),
-                child: Image.network(
-                  "https://i.insider.com/5e625eccfee23d0c3b666de8?width=1136&format=jpeg",
-                  fit: BoxFit.contain,
+      onDismissed: (direction) {
+        cartProvider.removeItem(cartId);
+      },
+      child: Container(
+        height: mHeight * 0.17,
+        child: Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 4,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12)),
+                  child: Image.network(
+                    loadedProduct.imageURL,
+                    fit: BoxFit.fitHeight,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(
+                width: 15,
+              ),
+              Expanded(
+                flex: 4,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Google Home",
-                        style: themeConst.textTheme.subtitle1
-                            .copyWith(fontSize: 18)),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Rs. 2000",
+                        Text(title,
+                            style: themeConst.textTheme.subtitle1
+                                .copyWith(fontSize: 18)),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text("Rs. ${loadedProduct.price * quantity}",
                             style: themeConst.textTheme.subtitle2.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             )),
-                        Row(
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(color: greyColor)),
-                                child: Text("2")),
-                            IconButton(
-                                padding: const EdgeInsets.all(0),
-                                icon: Icon(
-                                  Icons.add,
-                                  color: themeConst.primaryColor,
-                                ),
-                                onPressed: () {})
-                          ],
-                        ),
+                      ],
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            padding: const EdgeInsets.all(0),
+                            icon: Icon(
+                              Icons.minimize,
+                              color: themeConst.primaryColor,
+                            ),
+                            onPressed: () {
+                              cartProvider.removeSingleItem(cartId);
+                            }),
+                        Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: greyColor)),
+                            child: Text("$quantity")),
+                        IconButton(
+                            padding: const EdgeInsets.all(0),
+                            icon: Icon(
+                              Icons.add,
+                              color: themeConst.primaryColor,
+                            ),
+                            onPressed: () {
+                              cartProvider.addToCart(cartId, title,
+                                  loadedProduct.price * quantity);
+                            })
                       ],
                     )
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

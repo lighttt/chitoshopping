@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 class ProductDetailScreen extends StatelessWidget {
   static const String routeName = "/product_detail_screen";
   ThemeData themeConst;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Chip _sizeChips({@required String title, @required Color color}) {
     return Chip(
@@ -40,7 +41,9 @@ class ProductDetailScreen extends StatelessWidget {
     final id = ModalRoute.of(context).settings.arguments as String;
     final provider = Provider.of<Products>(context, listen: false);
     final loadedProduct = provider.findProductById(id);
+    final cart = Provider.of<Cart>(context, listen: false);
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           loadedProduct.title,
@@ -149,11 +152,21 @@ class ProductDetailScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 padding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                color: themeConst.primaryColor,
+                color: Colors.lightGreen,
                 textColor: Colors.white,
                 onPressed: () {
-                  Provider.of<Cart>(context, listen: false)
-                      .addToCart(id, loadedProduct.title, loadedProduct.price);
+                  cart.addToCart(id, loadedProduct.title, loadedProduct.price);
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                      backgroundColor: themeConst.accentColor,
+                      duration: Duration(seconds: 2),
+                      content: Text("Added item to the cart"),
+                      action: SnackBarAction(
+                        label: "UNDO",
+                        textColor: Colors.black87,
+                        onPressed: () {
+                          cart.removeSingleItem(id);
+                        },
+                      )));
                 },
                 icon: Icon(Icons.shopping_cart),
                 label: Text("Add to Cart")),

@@ -1,7 +1,9 @@
+import 'package:chito_shopping/provider/order_provider.dart';
 import 'package:chito_shopping/screens/bottom_overview_screen.dart';
 import 'package:chito_shopping/screens/home/product_detail_screen.dart';
 import 'package:chito_shopping/screens/home/product_list_screen.dart';
 import 'package:chito_shopping/screens/profile/favourites_screen.dart';
+import 'package:chito_shopping/screens/profile/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +25,9 @@ class MyApp extends StatelessWidget {
         }),
         ChangeNotifierProvider(create: (BuildContext context) {
           return Cart();
+        }),
+        ChangeNotifierProvider(create: (BuildContext context) {
+          return Orders();
         }),
       ],
       child: MaterialApp(
@@ -52,6 +57,7 @@ class MyApp extends StatelessWidget {
           FavouritesScreen.routeName: (ctx) => FavouritesScreen(),
           ProductListScreen.routeName: (ctx) => ProductListScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          OrderScreen.routeName: (ctx) => OrderScreen(),
         },
       ),
     );
