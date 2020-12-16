@@ -63,8 +63,6 @@ class ProductDetailScreen extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.bold),
             ),
             contentPadding: const EdgeInsets.all(18),
-            subtitle: Text(loadedProduct.title,
-                style: themeConst.textTheme.subtitle1.copyWith(fontSize: 18)),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

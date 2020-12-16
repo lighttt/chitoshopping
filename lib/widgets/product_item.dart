@@ -26,35 +26,49 @@ class ProductItem extends StatelessWidget {
         elevation: 4,
         margin: const EdgeInsets.symmetric(horizontal: 5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-            child: Image.network(
-              loadedProduct.imageURL,
-              fit: BoxFit.fitHeight,
-              height: mHeight * 0.12,
-              width: mWidth * 0.31,
-            ),
-          ),
-          Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    loadedProduct.title,
-                    style: themeData.textTheme.subtitle1.copyWith(
-                        fontWeight: FontWeight.w600, color: greyColor),
+        child: Container(
+          height: mHeight * 0.15,
+          width: mWidth * 0.35,
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12)),
+                  child: Image.network(
+                    loadedProduct.imageURL,
+                    fit: BoxFit.cover,
+                    height: mHeight * 0.12,
                   ),
-                  Text(
-                    "Rs. ${loadedProduct.price}",
-                    style: themeData.textTheme.subtitle1.copyWith(
-                        fontWeight: FontWeight.w800, color: blackColor),
-                  ),
-                ],
-              )),
-        ]),
+                ),
+                Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          loadedProduct.title,
+                          softWrap: true,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: themeData.textTheme.subtitle1.copyWith(
+                              fontWeight: FontWeight.w600, color: greyColor),
+                        ),
+                        Text(
+                          "Rs. ${loadedProduct.price}",
+                          softWrap: true,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: themeData.textTheme.subtitle1.copyWith(
+                              fontWeight: FontWeight.w800, color: blackColor),
+                        ),
+                      ],
+                    )),
+              ]),
+        ),
       ),
     );
   }

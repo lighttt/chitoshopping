@@ -1,4 +1,6 @@
-import 'package:chito_shopping/provider/order_provider.dart';
+import 'package:chito_shopping/provider/order_provider.dart' show Orders;
+import 'package:chito_shopping/widgets/empty_order_widget.dart';
+import 'package:chito_shopping/widgets/order_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,12 +14,17 @@ class OrderScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Your Orders"),
       ),
-      body: ListView.builder(
-        itemBuilder: (context, i) {
-          return Text("$i");
-        },
-        itemCount: orderList.length,
-      ),
+      body: orderList.length == 0
+          ? EmptyOrder(type: "Order")
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              itemBuilder: (context, i) {
+                return OrderItem(
+                  orderItem: orderList[i],
+                );
+              },
+              itemCount: orderList.length,
+            ),
     );
   }
 }

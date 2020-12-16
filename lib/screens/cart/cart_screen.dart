@@ -2,6 +2,7 @@ import 'package:chito_shopping/provider/cart_provider.dart' show Cart;
 import 'package:chito_shopping/provider/order_provider.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:chito_shopping/widgets/cart_item.dart';
+import 'package:chito_shopping/widgets/empty_order_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,27 +24,29 @@ class CartScreen extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         scrollDirection: Axis.vertical,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: mHeight * 0.68,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 2,
-                ),
-                itemBuilder: (context, i) => CartItem(
-                  cartId: cartMap.keys.toList()[i],
-                  id: cartMap.values.toList()[i].id,
-                  title: cartMap.values.toList()[i].title,
-                  quantity: cartMap.values.toList()[i].quantity,
-                ),
-                itemCount: cartProvider.totalCount,
-              ),
-            ),
-            cartProvider.totalCount == 0
-                ? Container()
-                : Container(
+        child: cartProvider.totalCount == 0
+            ? EmptyOrder(
+                type: "Cart",
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: mHeight * 0.68,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 2,
+                      ),
+                      itemBuilder: (context, i) => CartItem(
+                        cartId: cartMap.keys.toList()[i],
+                        id: cartMap.values.toList()[i].id,
+                        title: cartMap.values.toList()[i].title,
+                        quantity: cartMap.values.toList()[i].quantity,
+                      ),
+                      itemCount: cartProvider.totalCount,
+                    ),
+                  ),
+                  Container(
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 10),
@@ -94,8 +97,8 @@ class CartScreen extends StatelessWidget {
                       ],
                     ),
                   )
-          ],
-        ),
+                ],
+              ),
       ),
     );
   }
