@@ -43,6 +43,28 @@ class CartItem extends StatelessWidget {
       onDismissed: (direction) {
         cartProvider.removeItem(cartId);
       },
+      confirmDismiss: (direction) {
+        return showDialog(
+            context: context,
+            builder: (dCtx) => AlertDialog(
+                  title: Text("Are you sure?"),
+                  content: Text("Do you want remove this item from cart?"),
+                  actions: [
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.pop(dCtx, false);
+                      },
+                      child: Text("No"),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.pop(dCtx, true);
+                      },
+                      child: Text("Yes"),
+                    ),
+                  ],
+                ));
+      },
       child: Container(
         height: mHeight * 0.17,
         child: Card(

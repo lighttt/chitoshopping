@@ -1,3 +1,4 @@
+import 'package:chito_shopping/screens/user_product/edit_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'cart/cart_screen.dart';
@@ -43,6 +44,13 @@ class _BottomOverviewScreenState extends State<BottomOverviewScreen> {
           title: Text(
             "My Products",
           ),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  Navigator.pushNamed(context, EditProductScreen.routeName);
+                })
+          ],
           backgroundColor: themeConst.primaryColor,
         );
       case 3:

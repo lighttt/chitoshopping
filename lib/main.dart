@@ -4,6 +4,7 @@ import 'package:chito_shopping/screens/home/product_detail_screen.dart';
 import 'package:chito_shopping/screens/home/product_list_screen.dart';
 import 'package:chito_shopping/screens/profile/favourites_screen.dart';
 import 'package:chito_shopping/screens/profile/order_screen.dart';
+import 'package:chito_shopping/screens/user_product/edit_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,9 +35,9 @@ class MyApp extends StatelessWidget {
         title: 'Chito Shopping',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primaryColor: Colors.redAccent.shade200,
-          primaryColorLight: Colors.redAccent.shade200,
-          primaryColorDark: Colors.redAccent.shade200,
+          primaryColor: Colors.green,
+          primaryColorLight: Colors.green,
+          primaryColorDark: Colors.green,
           accentColor: Color(0xFFF7B733),
           canvasColor: Colors.white,
           fontFamily: "Montserrat",
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           ProductListScreen.routeName: (ctx) => ProductListScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           OrderScreen.routeName: (ctx) => OrderScreen(),
+          EditProductScreen.routeName: (ctx) => EditProductScreen(),
         },
       ),
     );
