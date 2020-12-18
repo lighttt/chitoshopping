@@ -100,4 +100,19 @@ class Products with ChangeNotifier {
     toggleProduct.isFavourite = !toggleProduct.isFavourite;
     notifyListeners();
   }
+
+  //add product
+  void addProduct(Product product) {
+    final newProduct = Product(
+        id: product.id,
+        type: product.type,
+        category: product.category,
+        title: product.title,
+        description: product.description,
+        rating: product.rating,
+        price: product.price,
+        imageURL: product.imageURL);
+    _products.add(newProduct);
+    notifyListeners();
+  }
 }

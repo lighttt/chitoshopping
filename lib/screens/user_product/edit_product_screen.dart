@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:chito_shopping/provider/products_provider.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const String routeName = "/edit_product_screen";
@@ -16,18 +18,39 @@ class _EditProductScreenState extends State<EditProductScreen> {
   double mHeight, mWidth;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<String> _productType = ["Flash", "New"];
+  String _selectedType;
+
+  //product vars
+  String _title, _price, _description, _category;
 
   //image picker
   File _imageFile;
   final imagePicker = ImagePicker();
 
   void _saveForm() {
-    _formKey.currentState.validate();
+    final isValid = _formKey.currentState.validate();
     if (_imageFile == null) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Please add a product image"),
         backgroundColor: themeConst.errorColor,
       ));
+    }
+    if (isValid) {
+      _formKey.currentState.save();
+      final newProduct = Product(
+        imageURL:
+            "https://d4kkpd69xt9l7.cloudfront.net/sys-master/images/h57/hdd/9010331451422/razer-blade-pro-hero-mobile.jpg",
+        id: DateTime.now().toString(),
+        price: double.parse(_price),
+        category: _category,
+        description: _description,
+        rating: "4.0",
+        type: _selectedType,
+        title: _title,
+      );
+      Provider.of<Products>(context, listen: false).addProduct(newProduct);
+      Navigator.pop(context);
     }
   }
 
@@ -95,6 +118,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 }
                 return null;
               },
+              onSaved: (value) {
+                _title = value;
+              },
             ),
             TextFormField(
               decoration: InputDecoration(
@@ -114,6 +140,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 }
                 return null;
               },
+              onSaved: (value) {
+                _price = value;
+              },
             ),
             TextFormField(
               decoration: InputDecoration(
@@ -127,6 +156,46 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 }
                 if (value.length < 10) {
                   return "Description is too short";
+                }
+                return null;
+              },
+              onSaved: (value) {
+                _description = value;
+              },
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: "Category",
+              ),
+              keyboardType: TextInputType.text,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return "Category is required";
+                }
+                if (value.length < 4) {
+                  return "Category is too short";
+                }
+                return null;
+              },
+              onSaved: (value) {
+                _category = value;
+              },
+            ),
+            DropdownButtonFormField<String>(
+              value: _selectedType,
+              decoration: InputDecoration(labelText: "Select product type"),
+              items: _productType
+                  .map((type) =>
+                      DropdownMenuItem(child: Text(type), value: type))
+                  .toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedType = newValue;
+                });
+              },
+              validator: (value) {
+                if (value == null) {
+                  return "Product type is required";
                 }
                 return null;
               },

@@ -33,8 +33,9 @@ dependencies:
   provider: ^4.3.2+2
   lottie: ^0.7.0+1
   image_picker: ^0.6.7+15
-
-
+  firebase_core: ^0.5.3
+  firebase_auth: ^0.18.4+1
+  http: ^0.12.2
 
 
 dev_dependencies:

@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:chito_shopping/screens/profile/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'favourites_screen.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatelessWidget {
   ThemeData themeConst;
@@ -116,6 +119,23 @@ class ProfileScreen extends StatelessWidget {
             style: themeConst.textTheme.subtitle1
                 .copyWith(fontWeight: FontWeight.w600),
           ),
+          onTap: () async {
+            // final response =
+            //     await http.post("https://jsonplaceholder.typicode.com/posts",
+            //         body: json.encode({
+            //           "userId": 1,
+            //           "id": 1,
+            //           "title": "delectus aut autem",
+            //           "completed": true,
+            //         }));
+            final responseGet =
+                await http.get("https://jsonplaceholder.typicode.com/posts");
+
+            final responseBody = json.decode(responseGet.body) as List<dynamic>;
+            responseBody.forEach((product) {
+              print(product["id"]);
+            });
+          },
         ),
         Divider(
           thickness: 2,
