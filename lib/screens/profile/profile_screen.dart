@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chito_shopping/provider/API.dart';
 import 'package:chito_shopping/screens/profile/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -120,21 +121,8 @@ class ProfileScreen extends StatelessWidget {
                 .copyWith(fontWeight: FontWeight.w600),
           ),
           onTap: () async {
-            // final response =
-            //     await http.post("https://jsonplaceholder.typicode.com/posts",
-            //         body: json.encode({
-            //           "userId": 1,
-            //           "id": 1,
-            //           "title": "delectus aut autem",
-            //           "completed": true,
-            //         }));
-            final responseGet =
-                await http.get("https://jsonplaceholder.typicode.com/posts");
-
-            final responseBody = json.decode(responseGet.body) as List<dynamic>;
-            responseBody.forEach((product) {
-              print(product["id"]);
-            });
+            final response = await http.get(API.products);
+            print(response.body);
           },
         ),
         Divider(

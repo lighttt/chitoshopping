@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:chito_shopping/provider/API.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id;
@@ -101,18 +105,59 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<List<Product>> fetchUserProduct() async {
+    try {
+      final response = await http.get(API.products);
+      final userMap = json.decode(response.body) as Map<String, dynamic>;
+      List<Product> userProducts = [];
+      userMap.forEach((prodId, prodData) {
+        userProducts.add(Product(
+            id: prodId,
+            type: prodData['type'],
+            category: prodData['category'],
+            title: prodData['title'],
+            description: prodData['description'],
+            rating: prodData['rating'],
+            price: prodData['price'],
+            imageURL: prodData['imageURL']));
+      });
+      return userProducts;
+    } catch (error) {
+      print(error);
+      throw (error);
+    }
+  }
+
   //add product
-  void addProduct(Product product) {
-    final newProduct = Product(
-        id: product.id,
-        type: product.type,
-        category: product.category,
-        title: product.title,
-        description: product.description,
-        rating: product.rating,
-        price: product.price,
-        imageURL: product.imageURL);
-    _products.add(newProduct);
-    notifyListeners();
+  Future<void> addProduct(Product product) async {
+    //add to firebase
+    try {
+      final response = await http.post(API.products,
+          body: json.encode({
+            "type": product.type,
+            "category": product.category,
+            "title": product.title,
+            "description": product.description,
+            "rating": product.rating,
+            "price": product.price,
+            "imageURL": product.imageURL
+          }));
+      print(response.body);
+      final id = json.decode(response.body);
+      final newProduct = Product(
+          id: id["name"],
+          type: product.type,
+          category: product.category,
+          title: product.title,
+          description: product.description,
+          rating: product.rating,
+          price: product.price,
+          imageURL: product.imageURL);
+      _products.add(newProduct);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw (error);
+    }
   }
 }

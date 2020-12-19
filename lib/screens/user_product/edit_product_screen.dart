@@ -27,8 +27,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   //image picker
   File _imageFile;
   final imagePicker = ImagePicker();
+  bool _isLoading = false;
 
-  void _saveForm() {
+  void _saveForm() async {
     final isValid = _formKey.currentState.validate();
     if (_imageFile == null) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -38,6 +39,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     if (isValid) {
       _formKey.currentState.save();
+      setState(() {
+        _isLoading = true;
+      });
       final newProduct = Product(
         imageURL:
             "https://d4kkpd69xt9l7.cloudfront.net/sys-master/images/h57/hdd/9010331451422/razer-blade-pro-hero-mobile.jpg",
@@ -49,8 +53,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
         type: _selectedType,
         title: _title,
       );
-      Provider.of<Products>(context, listen: false).addProduct(newProduct);
-      Navigator.pop(context);
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(newProduct);
+        Navigator.pop(context);
+      } catch (error) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Something went wrong! Please try again"),
+          backgroundColor: themeConst.errorColor,
+        ));
+      }
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -205,10 +220,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ),
             RaisedButton.icon(
               color: greenColor,
-              icon: Icon(Icons.save),
+              icon: _isLoading ? Container() : Icon(Icons.save),
               textColor: Colors.white,
-              onPressed: _saveForm,
-              label: Text("Save"),
+              onPressed: _isLoading ? null : _saveForm,
+              disabledColor: greenColor,
+              label: _isLoading
+                  ? Center(
+                      child: Container(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    )
+                  : Text("Save"),
             )
           ],
         ),
