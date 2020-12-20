@@ -20,53 +20,75 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> _productType = ["Flash", "New"];
   String _selectedType;
+  String _id;
 
   //product vars
   String _title, _price, _description, _category;
+  Product _editProduct;
 
   //image picker
   File _imageFile;
   final imagePicker = ImagePicker();
   bool _isLoading = false;
+  bool _isInit = true;
 
   void _saveForm() async {
     final isValid = _formKey.currentState.validate();
-    if (_imageFile == null) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("Please add a product image"),
-        backgroundColor: themeConst.errorColor,
-      ));
-    }
-    if (isValid) {
-      _formKey.currentState.save();
-      setState(() {
-        _isLoading = true;
-      });
-      final newProduct = Product(
-        imageURL:
-            "https://d4kkpd69xt9l7.cloudfront.net/sys-master/images/h57/hdd/9010331451422/razer-blade-pro-hero-mobile.jpg",
-        id: DateTime.now().toString(),
-        price: double.parse(_price),
-        category: _category,
-        description: _description,
-        rating: "4.0",
-        type: _selectedType,
-        title: _title,
-      );
-      try {
-        await Provider.of<Products>(context, listen: false)
-            .addProduct(newProduct);
-        Navigator.pop(context);
-      } catch (error) {
+    if (_id == null) {
+      if (_imageFile == null) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("Something went wrong! Please try again"),
+          content: Text("Please add a product image"),
           backgroundColor: themeConst.errorColor,
         ));
       }
-      setState(() {
-        _isLoading = false;
-      });
+    } else {
+      if (_imageFile == null && _editProduct.imageURL.isEmpty) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Please add a product image"),
+          backgroundColor: themeConst.errorColor,
+        ));
+      }
     }
+    if (isValid) {
+      _formKey.currentState.save();
+      await _addOrUpdateProduct();
+    }
+  }
+
+  Future<void> _addOrUpdateProduct() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final newProduct = Product(
+      imageURL:
+          "https://d4kkpd69xt9l7.cloudfront.net/sys-master/images/h57/hdd/9010331451422/razer-blade-pro-hero-mobile.jpg",
+      id: DateTime.now().toString(),
+      price: double.parse(_price),
+      category: _category,
+      description: _description,
+      rating: "4.0",
+      type: _selectedType,
+      title: _title,
+    );
+    try {
+      if (_id.isNotEmpty && _id != null) {
+        await Provider.of<Products>(context, listen: false)
+            .updateProduct(_id, newProduct);
+      } else {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(newProduct);
+      }
+      Navigator.pop(context);
+    } catch (error) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Something went wrong! Please try again"),
+        backgroundColor: themeConst.errorColor,
+      ));
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   // capture image from camera
@@ -78,6 +100,51 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isInit) {
+      _id = ModalRoute.of(context).settings.arguments as String;
+      if (_id != null) {
+        _editProduct =
+            Provider.of<Products>(context, listen: false).findProductById(_id);
+        _selectedType = _editProduct.type;
+      } else {
+        _editProduct = Product(
+            id: "",
+            type: "",
+            category: "",
+            title: "",
+            description: "",
+            rating: "",
+            price: 0.0,
+            imageURL: "");
+      }
+    }
+    _isInit = false;
+  }
+
+  Widget _getImageWidget() {
+    if (_imageFile != null) {
+      return Image.file(
+        _imageFile,
+        fit: BoxFit.cover,
+      );
+    } else if (_editProduct.imageURL.isNotEmpty &&
+        _editProduct.imageURL != null) {
+      return Image.network(
+        _editProduct.imageURL,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Center(
+          child: Text(
+        "Upload product picture",
+        textAlign: TextAlign.center,
+      ));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     MediaQueryData mediaConst = MediaQuery.of(context);
     mHeight = mediaConst.size.height;
@@ -86,7 +153,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Edit Product"),
+        title: Text(_id == null ? "Add Product" : "Edit Product"),
       ),
       body: Form(
         key: _formKey,
@@ -99,26 +166,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 InkWell(
                   onTap: _takePhoto,
                   child: Container(
-                    height: mHeight * 0.2,
-                    width: mWidth * 0.4,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: greyColor, width: 1),
-                    ),
-                    child: _imageFile == null
-                        ? Center(
-                            child: Text(
-                            "Upload product picture",
-                            textAlign: TextAlign.center,
-                          ))
-                        : Image.file(
-                            _imageFile,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
+                      height: mHeight * 0.2,
+                      width: mWidth * 0.4,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: greyColor, width: 1),
+                      ),
+                      child: _getImageWidget()),
                 ),
               ],
             ),
             TextFormField(
+              initialValue: _editProduct.title,
               decoration: InputDecoration(
                 labelText: "Title",
               ),
@@ -138,6 +196,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               },
             ),
             TextFormField(
+              initialValue: _id == null ? "" : _editProduct.price.toString(),
               decoration: InputDecoration(
                 labelText: "Price",
               ),
@@ -160,6 +219,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               },
             ),
             TextFormField(
+              initialValue: _editProduct.description,
               decoration: InputDecoration(
                 labelText: "Description",
               ),
@@ -179,6 +239,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               },
             ),
             TextFormField(
+              initialValue: _editProduct.category,
               decoration: InputDecoration(
                 labelText: "Category",
               ),

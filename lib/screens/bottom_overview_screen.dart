@@ -1,6 +1,8 @@
+import 'package:chito_shopping/provider/products_provider.dart';
 import 'package:chito_shopping/screens/user_product/edit_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'cart/cart_screen.dart';
 import 'home/home_screen.dart';
 import 'profile/profile_screen.dart';
@@ -17,6 +19,8 @@ class _BottomOverviewScreenState extends State<BottomOverviewScreen> {
   /// Current Page
   int _selectedPageIndex = 0;
   ThemeData themeConst;
+  bool _isInit = true;
+  bool _isLoading = false;
 
   // Change the index
   void _selectPage(int index) {
@@ -80,6 +84,25 @@ class _BottomOverviewScreenState extends State<BottomOverviewScreen> {
   }
 
   @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        await Provider.of<Products>(context, listen: false).fetchAllProducts();
+      } catch (error) {
+        print(error);
+      }
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    _isInit = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     themeConst = Theme.of(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -88,7 +111,11 @@ class _BottomOverviewScreenState extends State<BottomOverviewScreen> {
     ));
     return Scaffold(
       appBar: _getCurrentAppBar(),
-      body: _getCurrentPage(),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : _getCurrentPage(),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 20,
         currentIndex: _selectedPageIndex,
