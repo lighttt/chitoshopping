@@ -39,7 +39,43 @@ class UserProductScreen extends StatelessWidget {
                     Icons.delete,
                     color: themeConst.errorColor,
                   ),
-                  onPressed: () {}),
+                  onPressed: () async {
+                    try {
+                      await productsProvider
+                          .deleteProduct(userProducts[index].id);
+                      showDialog(
+                          context: context,
+                          builder: (dCtx) => AlertDialog(
+                                title: Text("Success!"),
+                                content: Text("Deleted the item!"),
+                                actions: [
+                                  RaisedButton(
+                                    onPressed: () {
+                                      Navigator.pop(dCtx);
+                                    },
+                                    color: themeConst.primaryColor,
+                                    child: Text("Okay"),
+                                  )
+                                ],
+                              ));
+                    } catch (error) {
+                      showDialog(
+                          context: context,
+                          builder: (dCtx) => AlertDialog(
+                                title: Text("Error!"),
+                                content: Text("Cannot delete the item!"),
+                                actions: [
+                                  RaisedButton(
+                                    onPressed: () {
+                                      Navigator.pop(dCtx);
+                                    },
+                                    child: Text("Okay"),
+                                    color: themeConst.primaryColor,
+                                  )
+                                ],
+                              ));
+                    }
+                  }),
             ],
           ),
         ),

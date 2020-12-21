@@ -74,7 +74,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     try {
       if (_id.isNotEmpty && _id != null) {
         await Provider.of<Products>(context, listen: false)
-            .updateProduct(_id, newProduct);
+            .updateProduct(_id, newProduct, _imageFile);
       } else {
         await Provider.of<Products>(context, listen: false)
             .addProduct(newProduct);

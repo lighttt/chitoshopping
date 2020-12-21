@@ -1,15 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chito_shopping/provider/API.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_storage/firebase_storage.dart';
 
 class Product with ChangeNotifier {
   final String id;
   final String title;
-  final String imageURL;
+  String imageURL;
   final String description;
   final String rating;
   final double price;
@@ -165,22 +167,69 @@ class Products with ChangeNotifier {
   }
 
   //update product
-  Future<void> updateProduct(String id, Product updatedProduct) async {
+  Future<void> updateProduct(
+      String id, Product updatedProduct, File imageFile) async {
     try {
       final prodIndex = _products.indexWhere((prod) => prod.id == id);
+      Map updateMap = {
+        "type": updatedProduct.type,
+        "category": updatedProduct.category,
+        "title": updatedProduct.title,
+        "description": updatedProduct.description,
+        "rating": updatedProduct.rating,
+        "price": updatedProduct.price,
+        "imageURL": updatedProduct.imageURL
+      };
+      if (imageFile != null) {
+        updateMap["imageURL"] = await uploadProductPhoto(id, imageFile);
+        updatedProduct.imageURL = updateMap["imageURL"];
+      }
       final response = await http.patch(API.baseUrl + "/products/$id.json",
-          body: json.encode({
-            "type": updatedProduct.type,
-            "category": updatedProduct.category,
-            "title": updatedProduct.title,
-            "description": updatedProduct.description,
-            "rating": updatedProduct.rating,
-            "price": updatedProduct.price,
-            "imageURL": updatedProduct.imageURL
-          }));
+          body: json.encode(updateMap));
       print(response.body);
       _products[prodIndex] = updatedProduct;
       notifyListeners();
+    } catch (error) {
+      print(error);
+      throw (error);
+    }
+  }
+
+  //delete product
+  Future<void> deleteProduct(String productId) async {
+    try {
+      final prodIndex = _products.indexWhere((prod) => prod.id == productId);
+      Product existingProduct = _products[prodIndex];
+      //remove the product
+      _products.removeAt(prodIndex);
+      notifyListeners();
+      final response =
+          await http.delete(API.baseUrl + "/products/$productId.json");
+      // if firebase could not delete
+      if (response.statusCode >= 400) {
+        _products.insert(prodIndex, existingProduct);
+        notifyListeners();
+        throw HttpException("Could not be deleted! Try again!");
+      } else {
+        existingProduct = null;
+      }
+    } catch (error) {
+      print(error);
+      throw (error);
+    }
+  }
+
+  // Upload product photo to firebase
+  Future<String> uploadProductPhoto(String productId, File imageFile) async {
+    try {
+      String imageFileName = imageFile.path.split('/').last;
+      Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('products/$productId/$imageFileName');
+
+      UploadTask uploadTask = storageRef.putFile(imageFile);
+      String imageUrl = await (await uploadTask).ref.getDownloadURL();
+      return imageUrl;
     } catch (error) {
       print(error);
       throw (error);
