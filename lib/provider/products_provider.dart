@@ -27,7 +27,7 @@ class Product with ChangeNotifier {
       @required this.description,
       @required this.rating,
       @required this.price,
-      @required this.imageURL,
+      this.imageURL,
       this.isFavourite = false});
 }
 
@@ -86,6 +86,11 @@ class Products with ChangeNotifier {
   }
 
   //Get the flash sale product list
+  List<Product> getCategoryProduct(String category) {
+    return [..._products.where((prod) => prod.category == category).toList()];
+  }
+
+  //Get the flash sale product list
   List<Product> get newProducts {
     return [..._products.where((prod) => prod.type == "New").toList()];
   }
@@ -134,30 +139,35 @@ class Products with ChangeNotifier {
   }
 
   //add product
-  Future<void> addProduct(Product product) async {
+  Future<void> addProduct(Product addProduct, File imageFile) async {
     //add to firebase
     try {
-      final response = await http.post(API.products,
-          body: json.encode({
-            "type": product.type,
-            "category": product.category,
-            "title": product.title,
-            "description": product.description,
-            "rating": product.rating,
-            "price": product.price,
-            "imageURL": product.imageURL
-          }));
+      final addMap = {
+        "type": addProduct.type,
+        "category": addProduct.category,
+        "title": addProduct.title,
+        "description": addProduct.description,
+        "rating": addProduct.rating,
+        "price": addProduct.price,
+        "imageURL": ""
+      };
+      if (imageFile != null) {
+        addMap["imageURL"] =
+            await uploadProductPhoto(DateTime.now().toString(), imageFile);
+        addProduct.imageURL = addMap["imageURL"];
+      }
+      final response = await http.post(API.products, body: json.encode(addMap));
       print(response.body);
       final id = json.decode(response.body);
       final newProduct = Product(
           id: id["name"],
-          type: product.type,
-          category: product.category,
-          title: product.title,
-          description: product.description,
-          rating: product.rating,
-          price: product.price,
-          imageURL: product.imageURL);
+          type: addProduct.type,
+          category: addProduct.category,
+          title: addProduct.title,
+          description: addProduct.description,
+          rating: addProduct.rating,
+          price: addProduct.price,
+          imageURL: addProduct.imageURL);
       _products.add(newProduct);
       notifyListeners();
     } catch (error) {

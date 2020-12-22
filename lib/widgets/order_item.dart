@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chito_shopping/provider/order_provider.dart' as oi;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class OrderItem extends StatelessWidget {
   ThemeData themeConst;
@@ -22,11 +23,16 @@ class OrderItem extends StatelessWidget {
                 .copyWith(fontWeight: FontWeight.w700),
           ),
           subtitle: Text(
-            orderItem.dateTime.toString(),
+            DateFormat.yMMMEd().add_jm().format(orderItem.dateTime),
             style: TextStyle(color: Colors.black87),
           ),
-          leading:
-              Icon(FontAwesomeIcons.truckLoading, color: Colors.orangeAccent),
+          leading: Icon(
+              orderItem.status == "Pending"
+                  ? FontAwesomeIcons.truckLoading
+                  : FontAwesomeIcons.truckPickup,
+              color: orderItem.status == "Pending"
+                  ? Colors.orangeAccent
+                  : Colors.green),
           childrenPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           children: orderItem.products.map((product) {

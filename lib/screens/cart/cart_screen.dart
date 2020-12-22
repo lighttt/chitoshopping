@@ -6,10 +6,16 @@ import 'package:chito_shopping/widgets/empty_order_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
   ThemeData themeConst;
   double mHeight, mWidth;
-  List _cartList = ["1", "2", "3", "4", "5"];
+
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -80,14 +86,31 @@ class CartScreen extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: RaisedButton(
-                            onPressed: () {
-                              orderProvider.addOrder(cartMap.values.toList(),
-                                  cartProvider.totalAmount);
-                              cartProvider.clearCart();
-                            },
-                            child: Text(
-                              "Checkout",
-                            ),
+                            onPressed: _isLoading
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    await orderProvider.addOrder(
+                                        cartMap.values.toList(),
+                                        cartProvider.totalAmount);
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    cartProvider.clearCart();
+                                  },
+                            child: _isLoading
+                                ? Container(
+                                    height: 20,
+                                    width: 20,
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : Text(
+                                    "Checkout",
+                                  ),
                             textColor: Colors.white,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),

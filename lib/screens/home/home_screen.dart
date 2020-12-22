@@ -13,33 +13,37 @@ class HomeScreen extends StatelessWidget {
   Widget _getCategoryItems(
       {@required String title,
       @required IconData icon,
+      @required Function onPress,
       @required Color color}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-            height: mHeight * 0.07,
-            width: mWidth * 0.15,
-            padding:
-                const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 10),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [color.withOpacity(0.7), color],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-                borderRadius: BorderRadius.circular(15)),
-            child: Center(
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 22,
-              ),
-            )),
-        SizedBox(
-          height: mHeight * 0.01,
-        ),
-        Text(title)
-      ],
+    return InkWell(
+      onTap: onPress,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+              height: mHeight * 0.07,
+              width: mWidth * 0.15,
+              padding: const EdgeInsets.only(
+                  left: 10, right: 10, bottom: 10, top: 10),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [color.withOpacity(0.7), color],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
+                  borderRadius: BorderRadius.circular(15)),
+              child: Center(
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              )),
+          SizedBox(
+            height: mHeight * 0.01,
+          ),
+          Text(title)
+        ],
+      ),
     );
   }
 
@@ -106,22 +110,47 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _getCategoryItems(
-                    color: themeConst.primaryColor,
-                    icon: FontAwesomeIcons.tshirt,
-                    title: "Clothing",
-                  ),
+                      color: themeConst.primaryColor,
+                      icon: FontAwesomeIcons.tshirt,
+                      title: "Clothing",
+                      onPress: () {
+                        Navigator.pushNamed(
+                            context, ProductListScreen.routeName, arguments: {
+                          "type": "Clothing",
+                          "diff": "category"
+                        });
+                      }),
                   _getCategoryItems(
                       color: Colors.green,
                       icon: FontAwesomeIcons.laptop,
-                      title: "Electronics"),
+                      title: "Electronics",
+                      onPress: () {
+                        Navigator.pushNamed(
+                            context, ProductListScreen.routeName, arguments: {
+                          "type": "Electronics",
+                          "diff": "category"
+                        });
+                      }),
                   _getCategoryItems(
                       color: Colors.blue,
                       icon: FontAwesomeIcons.couch,
-                      title: "Furniture"),
+                      title: "Furniture",
+                      onPress: () {
+                        Navigator.pushNamed(
+                            context, ProductListScreen.routeName, arguments: {
+                          "type": "Furniture",
+                          "diff": "category"
+                        });
+                      }),
                   _getCategoryItems(
                       color: Colors.purple,
                       icon: FontAwesomeIcons.baseballBall,
-                      title: "Sports"),
+                      title: "Sports",
+                      onPress: () {
+                        Navigator.pushNamed(
+                            context, ProductListScreen.routeName,
+                            arguments: {"type": "Sports", "diff": "category"});
+                      }),
                 ],
               ),
               SizedBox(
@@ -131,7 +160,7 @@ class HomeScreen extends StatelessWidget {
                   title: "Flash Sale",
                   onPress: () {
                     Navigator.pushNamed(context, ProductListScreen.routeName,
-                        arguments: "Flash Sale");
+                        arguments: {"type": "Flash Sale", "diff": "type"});
                   }),
               Container(
                 height: mHeight * 0.22,
@@ -153,7 +182,7 @@ class HomeScreen extends StatelessWidget {
                   title: "New Product",
                   onPress: () {
                     Navigator.pushNamed(context, ProductListScreen.routeName,
-                        arguments: "New Product");
+                        arguments: {"type": "New Product", "diff": "type"});
                   }),
               Container(
                 height: mHeight * 0.22,

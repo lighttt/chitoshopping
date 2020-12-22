@@ -34,7 +34,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _saveForm() async {
     final isValid = _formKey.currentState.validate();
+
     if (_id == null) {
+      print(_imageFile);
       if (_imageFile == null) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Please add a product image"),
@@ -61,8 +63,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     });
 
     final newProduct = Product(
-      imageURL:
-          "https://d4kkpd69xt9l7.cloudfront.net/sys-master/images/h57/hdd/9010331451422/razer-blade-pro-hero-mobile.jpg",
       id: DateTime.now().toString(),
       price: double.parse(_price),
       category: _category,
@@ -72,12 +72,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
       title: _title,
     );
     try {
-      if (_id.isNotEmpty && _id != null) {
+      if (_id != null) {
+        print("reached here 2");
         await Provider.of<Products>(context, listen: false)
             .updateProduct(_id, newProduct, _imageFile);
       } else {
+        print("reached here 3");
         await Provider.of<Products>(context, listen: false)
-            .addProduct(newProduct);
+            .addProduct(newProduct, _imageFile);
       }
       Navigator.pop(context);
     } catch (error) {
