@@ -1,4 +1,5 @@
 import 'package:chito_shopping/provider/order_provider.dart';
+import 'package:chito_shopping/screens/auth/register_screen.dart';
 import 'package:chito_shopping/screens/bottom_overview_screen.dart';
 import 'package:chito_shopping/screens/home/product_detail_screen.dart';
 import 'package:chito_shopping/screens/home/product_list_screen.dart';
@@ -11,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import 'provider/cart_provider.dart';
 import 'provider/products_provider.dart';
+import 'screens/auth/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,13 +57,15 @@ class MyApp extends StatelessWidget {
                     fontSize: 24)),
           ),
         ),
-        initialRoute: BottomOverviewScreen.routeName,
+        initialRoute: LoginScreen.routeName,
         routes: {
           BottomOverviewScreen.routeName: (ctx) => BottomOverviewScreen(),
           FavouritesScreen.routeName: (ctx) => FavouritesScreen(),
           ProductListScreen.routeName: (ctx) => ProductListScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           OrderScreen.routeName: (ctx) => OrderScreen(),
+          LoginScreen.routeName: (ctx) => LoginScreen(),
+          RegisterScreen.routeName: (ctx) => RegisterScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(),
         },
       ),

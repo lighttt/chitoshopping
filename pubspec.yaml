@@ -39,6 +39,7 @@ dependencies:
   firebase_storage: ^5.2.0
   intl: ^0.16.1
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
