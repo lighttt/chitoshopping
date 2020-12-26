@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:chito_shopping/provider/API.dart';
+import 'package:chito_shopping/provider/auth_provider.dart';
+import 'package:chito_shopping/screens/auth/login_screen.dart';
 import 'package:chito_shopping/screens/profile/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 import 'favourites_screen.dart';
 import 'package:http/http.dart' as http;
@@ -121,8 +124,12 @@ class ProfileScreen extends StatelessWidget {
                 .copyWith(fontWeight: FontWeight.w600),
           ),
           onTap: () async {
-            final response = await http.get(API.products);
-            print(response.body);
+            try {
+              await Provider.of<AuthProvider>(context, listen: false).logout();
+              Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            } catch (error) {
+              print(error);
+            }
           },
         ),
         Divider(

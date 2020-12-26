@@ -1,3 +1,4 @@
+import 'package:chito_shopping/provider/auth_provider.dart';
 import 'package:chito_shopping/provider/order_provider.dart';
 import 'package:chito_shopping/screens/auth/register_screen.dart';
 import 'package:chito_shopping/screens/bottom_overview_screen.dart';
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (BuildContext context) {
+          return AuthProvider();
+        }),
         ChangeNotifierProvider(create: (BuildContext context) {
           return Products();
         }),

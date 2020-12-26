@@ -1,7 +1,12 @@
+import 'package:chito_shopping/provider/auth_provider.dart';
+import 'package:chito_shopping/screens/auth/login_screen.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../bottom_overview_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = "/register_screen";
@@ -12,12 +17,43 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   ThemeData themeConst;
-
   double mHeight, mWidth;
-
   final _formKey = GlobalKey<FormState>();
-
   bool _hidePassword = true;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _isLoading = false;
+
+  //vars
+  String email, password, username;
+  RegExp emailRegex = RegExp(
+      "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$");
+
+  void _saveForm() async {
+    bool isValid = _formKey.currentState.validate();
+    if (isValid) {
+      _formKey.currentState.save();
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        await Provider.of<AuthProvider>(context, listen: false)
+            .signUp(username, email, password);
+        Navigator.pushNamedAndRemoveUntil(context,
+            BottomOverviewScreen.routeName, (Route<dynamic> route) => false);
+      } catch (error) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+            error,
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: themeConst.errorColor,
+        ));
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     mWidth = mediaConst.size.width;
     themeConst = Theme.of(context);
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -73,9 +110,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         TextFormField(
                           decoration: InputDecoration(
+                              labelText: "Name", focusColor: greyColor),
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "Name is required";
+                            }
+                            if (value.length < 6) {
+                              return "Please enter a valid name";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            username = value;
+                          },
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
                               labelText: "Email", focusColor: greyColor),
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return "Email is required";
+                            }
+                            if (!emailRegex.hasMatch(value)) {
+                              return "Email is not valid";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            email = value;
+                          },
                         ),
                         SizedBox(
                           height: 10,
@@ -84,11 +151,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           alignment: Alignment.centerRight,
                           children: [
                             TextFormField(
-                              decoration:
-                                  InputDecoration(labelText: "Password"),
-                              obscureText: _hidePassword,
-                              obscuringCharacter: "*",
-                            ),
+                                decoration:
+                                    InputDecoration(labelText: "Password"),
+                                obscureText: _hidePassword,
+                                obscuringCharacter: "*",
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return "Password is required";
+                                  }
+                                  if (value.length < 6) {
+                                    return "Password must be at least 6 characters long";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  password = value;
+                                }),
                             IconButton(
                                 icon: _hidePassword
                                     ? Icon(
@@ -114,13 +192,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: themeConst.primaryColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
-                            onPressed: () {},
-                            child: Text(
-                              "Sign Up",
-                              style: themeConst.textTheme.headline6.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600),
-                            ),
+                            onPressed: _isLoading ? null : _saveForm,
+                            child: _isLoading
+                                ? Center(
+                                    child: Container(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator()))
+                                : Text(
+                                    "Sign Up",
+                                    style: themeConst.textTheme.headline6
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
+                                  ),
                           ),
                         ),
                         SizedBox(
