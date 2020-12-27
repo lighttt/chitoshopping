@@ -109,6 +109,7 @@ class _BottomOverviewScreenState extends State<BottomOverviewScreen> {
       statusBarColor:
           themeConst.primaryColor, //or set color with: Color(0xFF0000FF)
     ));
+
     return Scaffold(
       appBar: _getCurrentAppBar(),
       body: _isLoading
