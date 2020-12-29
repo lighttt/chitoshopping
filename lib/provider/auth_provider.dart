@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chito_shopping/exception/auth_exception.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +17,26 @@ class AuthProvider with ChangeNotifier {
   DateTime _expiryDate;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   Timer _authTimer;
+
+  // get if is authenticated
+  bool get isAuth {
+    return _authToken != null;
+  }
+
+  // get token for apis
+  String get token {
+    if (_expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now()) &&
+        _authToken != null) {
+      return _authToken;
+    }
+    return null;
+  }
+
+  // get userid
+  String get userId {
+    return _userId;
+  }
 
   /// sign in user with firebase
   Future<void> _authenticate(
@@ -33,9 +55,9 @@ class AuthProvider with ChangeNotifier {
       _userId = response.user.uid;
       final idTokenResult = await _firebaseAuth.currentUser.getIdTokenResult();
       _authToken = idTokenResult.token;
-      // _expiryDate = DateTime.now()
-      //     .add(Duration(hours: idTokenResult.expirationTime.hour));
-      _expiryDate = DateTime.now().add(Duration(minutes: 1));
+      _expiryDate = DateTime.now()
+          .add(Duration(hours: idTokenResult.expirationTime.hour));
+
       //auto logout if token expired
       _autoLogout();
       notifyListeners();
@@ -54,10 +76,10 @@ class AuthProvider with ChangeNotifier {
         "userId": _userId,
         "expiryDate": _expiryDate.toIso8601String(),
         "email": email,
-        "profileURL": profileURL,
         "username": username,
       });
       prefs.setString("userData", userData);
+      prefs.setString("profileURL", profileURL);
     } catch (error) {
       print(error);
       AuthResultStatus status = AuthResultException.handleException(error);
@@ -156,5 +178,39 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     _autoLogout();
     return true;
+  }
+
+  // Upload product photo to firebase
+  Future<void> uploadProductPhoto(File imageFile) async {
+    try {
+      String imageFileName = imageFile.path.split('/').last;
+      Reference storageRef =
+          FirebaseStorage.instance.ref().child('users/$_userId/$imageFileName');
+
+      UploadTask uploadTask = storageRef.putFile(imageFile);
+      String imageUrl = await (await uploadTask).ref.getDownloadURL();
+      await _addPhotoToDB(imageUrl);
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString("profileURL", imageUrl);
+    } catch (error) {
+      print(error);
+      throw (error);
+    }
+  }
+
+  // create new user in database
+  Future<void> _addPhotoToDB(String imageURL) async {
+    try {
+      final response = await http.put(API.users + "$userId.json",
+          body: json.encode({
+            "profileURL": imageURL,
+          }));
+      print(response.body);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      return extractedData;
+    } catch (error) {
+      print(error);
+      throw (error);
+    }
   }
 }

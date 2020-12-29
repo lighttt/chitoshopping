@@ -7,6 +7,7 @@ import 'package:chito_shopping/screens/home/product_list_screen.dart';
 import 'package:chito_shopping/screens/profile/favourites_screen.dart';
 import 'package:chito_shopping/screens/profile/order_screen.dart';
 import 'package:chito_shopping/screens/user_product/edit_product_screen.dart';
+import 'package:custom_splash/custom_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -87,11 +88,28 @@ class _MainPageState extends State<MainPage> {
   bool _isInit = true;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isInit) {
+      checkLogin();
+    }
+    _isInit = false;
+  }
+
+  void checkLogin() async {
+    _isLogin = await Provider.of<AuthProvider>(context).tryAutoLogin();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: Provider.of<AuthProvider>(context).tryAutoLogin(),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return snapshot.data ? BottomOverviewScreen() : LoginScreen();
-        });
+    return CustomSplash(
+      imagePath: "assets/images/app_logo.png",
+      backGroundColor: Colors.yellowAccent.shade400,
+      animationEffect: "fade-in",
+      logoSize: 200,
+      type: CustomSplashType.StaticDuration,
+      duration: 2500,
+      home: _isLogin ? BottomOverviewScreen() : LoginScreen(),
+    );
   }
 }
