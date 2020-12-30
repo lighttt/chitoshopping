@@ -36,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Map<String, dynamic> data = json.decode(prefs.getString("userData"));
     String imgURL = prefs.getString("profileURL");
     data.putIfAbsent("profileURL", () => imgURL);
+    print(data["username"]);
     return data == null ? {} : data;
   }
 

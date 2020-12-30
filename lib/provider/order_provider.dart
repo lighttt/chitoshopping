@@ -22,6 +22,11 @@ class OrderItem {
 }
 
 class Orders with ChangeNotifier {
+  final String _token;
+  final String _userId;
+
+  Orders(this._token, this._userId);
+
   List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
@@ -31,7 +36,8 @@ class Orders with ChangeNotifier {
   //fetch all orders
   Future<List<OrderItem>> fetchAllAndSetOrders() async {
     try {
-      final response = await http.get(API.orders);
+      final response =
+          await http.get(API.orders + "$_userId.json" + "?auth=$_token");
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return [];
@@ -67,20 +73,21 @@ class Orders with ChangeNotifier {
   //add cart to order
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     try {
-      final response = await http.post(API.orders,
-          body: json.encode({
-            'amount': total,
-            'dateTime': DateTime.now().toIso8601String(),
-            'status': "Pending",
-            'products': cartProducts
-                .map((cp) => {
-                      'id': cp.id,
-                      'quantity': cp.quantity,
-                      'price': cp.price,
-                      'title': cp.title,
-                    })
-                .toList()
-          }));
+      final response =
+          await http.post(API.orders + "$_userId.json" + "?auth=$_token",
+              body: json.encode({
+                'amount': total,
+                'dateTime': DateTime.now().toIso8601String(),
+                'status': "Pending",
+                'products': cartProducts
+                    .map((cp) => {
+                          'id': cp.id,
+                          'quantity': cp.quantity,
+                          'price': cp.price,
+                          'title': cp.title,
+                        })
+                    .toList()
+              }));
       final id = json.decode(response.body);
       _orders.add(OrderItem(
           id: id['name'],

@@ -31,15 +31,25 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (BuildContext context) {
           return AuthProvider();
         }),
-        ChangeNotifierProvider(create: (BuildContext context) {
-          return Products();
-        }),
+        ChangeNotifierProxyProvider<AuthProvider, Products>(
+          create: (BuildContext context) {
+            return Products("", "");
+          },
+          update: (context, AuthProvider auth, Products updatedProduct) {
+            return Products(auth.token, auth.userId);
+          },
+        ),
         ChangeNotifierProvider(create: (BuildContext context) {
           return Cart();
         }),
-        ChangeNotifierProvider(create: (BuildContext context) {
-          return Orders();
-        }),
+        ChangeNotifierProxyProvider<AuthProvider, Orders>(
+          create: (BuildContext context) {
+            return Orders("", "");
+          },
+          update: (context, AuthProvider auth, Orders updateOrders) {
+            return Orders(auth.token, auth.userId);
+          },
+        ),
       ],
       child: MaterialApp(
         title: 'Chito Shopping',

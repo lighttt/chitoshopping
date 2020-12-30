@@ -17,6 +17,7 @@ class Product with ChangeNotifier {
   final double price;
   final String type;
   final String category;
+  final String creatorId;
   bool isFavourite;
 
   Product(
@@ -27,11 +28,17 @@ class Product with ChangeNotifier {
       @required this.description,
       @required this.rating,
       @required this.price,
+      this.creatorId,
       this.imageURL,
       this.isFavourite = false});
 }
 
 class Products with ChangeNotifier {
+  final String _token;
+  final String _userId;
+
+  Products(this._token, this._userId);
+
   List<Product> _products = [
     // Product(
     //     category: "Clothing",
@@ -100,24 +107,44 @@ class Products with ChangeNotifier {
     return [..._products.where((prod) => prod.isFavourite).toList()];
   }
 
+  //Get the favourite product list
+  List<Product> get userProducts {
+    return [..._products.where((prod) => prod.creatorId == _userId).toList()];
+  }
+
   // Find product by id
   Product findProductById(String id) {
     return _products.firstWhere((prod) => prod.id == id);
   }
 
   // toggle favourites
-  void toggleFavourite(String id) {
+  Future<void> toggleFavourite(String id) async {
     Product toggleProduct = _products.firstWhere((prod) => prod.id == id);
+    final oldStatus = toggleProduct.isFavourite;
     toggleProduct.isFavourite = !toggleProduct.isFavourite;
     notifyListeners();
+    //post data and if any error reverse old status
+    try {
+      await http.put(
+          API.toggleFavourite + "$_userId/$id.json" + "?auth=$_token",
+          body: json.encode(toggleProduct.isFavourite));
+    } catch (error) {
+      toggleProduct.isFavourite = oldStatus;
+      notifyListeners();
+    }
   }
 
   // fetch all the product from firebase
   Future<void> fetchAllProducts() async {
     try {
-      print(API.products);
-      final response = await http.get(API.products);
+      final response = await http.get(API.products + "?auth=$_token");
       final allMap = json.decode(response.body) as Map<String, dynamic>;
+
+      //fetch favourite api also
+      final favouriteResponse = await http
+          .get(API.toggleFavourite + "$_userId.json" + "?auth=$_token");
+      final favouriteData = json.decode(favouriteResponse.body);
+
       List<Product> allProducts = [];
       allMap.forEach((prodId, prodData) {
         allProducts.add(Product(
@@ -128,7 +155,11 @@ class Products with ChangeNotifier {
             description: prodData['description'],
             rating: prodData['rating'],
             price: double.parse(prodData["price"].toString()),
-            imageURL: prodData['imageURL']));
+            imageURL: prodData['imageURL'],
+            creatorId: prodData["creatorId"],
+            isFavourite: favouriteData == null
+                ? false
+                : favouriteData[prodId] ?? false));
       });
       _products = allProducts;
       notifyListeners();
@@ -149,14 +180,16 @@ class Products with ChangeNotifier {
         "description": addProduct.description,
         "rating": addProduct.rating,
         "price": addProduct.price,
-        "imageURL": ""
+        "imageURL": "",
+        "creatorId": _userId,
       };
       if (imageFile != null) {
         addMap["imageURL"] =
             await uploadProductPhoto(DateTime.now().toString(), imageFile);
         addProduct.imageURL = addMap["imageURL"];
       }
-      final response = await http.post(API.products, body: json.encode(addMap));
+      final response = await http.post(API.products + "?auth=$_token",
+          body: json.encode(addMap));
       print(response.body);
       final id = json.decode(response.body);
       final newProduct = Product(
@@ -167,7 +200,8 @@ class Products with ChangeNotifier {
           description: addProduct.description,
           rating: addProduct.rating,
           price: addProduct.price,
-          imageURL: addProduct.imageURL);
+          imageURL: addProduct.imageURL,
+          creatorId: _userId);
       _products.add(newProduct);
       notifyListeners();
     } catch (error) {
@@ -188,13 +222,15 @@ class Products with ChangeNotifier {
         "description": updatedProduct.description,
         "rating": updatedProduct.rating,
         "price": updatedProduct.price,
-        "imageURL": updatedProduct.imageURL
+        "imageURL": updatedProduct.imageURL,
+        "creatorId": _userId
       };
       if (imageFile != null) {
         updateMap["imageURL"] = await uploadProductPhoto(id, imageFile);
         updatedProduct.imageURL = updateMap["imageURL"];
       }
-      final response = await http.patch(API.baseUrl + "/products/$id.json",
+      final response = await http.patch(
+          API.baseUrl + "/products/$id.json" + "?auth=$_token",
           body: json.encode(updateMap));
       print(response.body);
       _products[prodIndex] = updatedProduct;
@@ -213,8 +249,8 @@ class Products with ChangeNotifier {
       //remove the product
       _products.removeAt(prodIndex);
       notifyListeners();
-      final response =
-          await http.delete(API.baseUrl + "/products/$productId.json");
+      final response = await http
+          .delete(API.baseUrl + "/products/$productId.json" + "?auth=$_token");
       // if firebase could not delete
       if (response.statusCode >= 400) {
         _products.insert(prodIndex, existingProduct);

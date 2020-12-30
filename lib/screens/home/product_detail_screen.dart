@@ -95,8 +95,12 @@ class ProductDetailScreen extends StatelessWidget {
                         size: 30,
                       ),
                       color: themeConst.primaryColor,
-                      onPressed: () {
-                        provider.toggleFavourite(id);
+                      onPressed: () async {
+                        try {
+                          await provider.toggleFavourite(id);
+                        } catch (error) {
+                          print(error);
+                        }
                       },
                     );
                   },

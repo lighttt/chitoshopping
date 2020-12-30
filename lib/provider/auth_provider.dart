@@ -49,7 +49,6 @@ class AuthProvider with ChangeNotifier {
       } else {
         response = await _firebaseAuth.createUserWithEmailAndPassword(
             email: email, password: password);
-        await _addNewUser(response.user.uid, username, email);
       }
       //get user id and get auth token
       _userId = response.user.uid;
@@ -68,6 +67,8 @@ class AuthProvider with ChangeNotifier {
         final extractedData = await _getUserData(_userId);
         profileURL = extractedData["profileURL"];
         username = extractedData["username"];
+      } else {
+        await _addNewUser(response.user.uid, username, email);
       }
       //save to shared prefs
       final prefs = await SharedPreferences.getInstance();
@@ -106,7 +107,8 @@ class AuthProvider with ChangeNotifier {
         "email": email,
         "profileURL": "",
       };
-      final response = await http.put(API.users + "$userId.json",
+      final response = await http.put(
+          API.users + "$userId.json" + "?auth=$_authToken",
           body: json.encode(addUser));
       print(response.body);
     } catch (error) {
@@ -118,7 +120,8 @@ class AuthProvider with ChangeNotifier {
   // create new user in database
   Future<Map<String, dynamic>> _getUserData(String userId) async {
     try {
-      final response = await http.get(API.users + "$userId.json");
+      final response =
+          await http.get(API.users + "$userId.json" + "?auth=$_authToken");
       print(response.body);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       return extractedData;
