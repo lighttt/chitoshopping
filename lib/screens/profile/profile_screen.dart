@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'favourites_screen.dart';
-import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatefulWidget {
   @override

@@ -7,7 +7,6 @@ import 'package:chito_shopping/screens/home/product_list_screen.dart';
 import 'package:chito_shopping/screens/profile/favourites_screen.dart';
 import 'package:chito_shopping/screens/profile/order_screen.dart';
 import 'package:chito_shopping/screens/user_product/edit_product_screen.dart';
-import 'package:custom_splash/custom_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'provider/cart_provider.dart';
 import 'provider/products_provider.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -108,18 +108,17 @@ class _MainPageState extends State<MainPage> {
 
   void checkLogin() async {
     _isLogin = await Provider.of<AuthProvider>(context).tryAutoLogin();
+    print("the login is $_isLogin");
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomSplash(
+    return SplashScreen(
       imagePath: "assets/images/app_logo.png",
       backGroundColor: Colors.yellowAccent.shade400,
-      animationEffect: "fade-in",
       logoSize: 200,
-      type: CustomSplashType.StaticDuration,
       duration: 2500,
-      home: _isLogin ? BottomOverviewScreen() : LoginScreen(),
+      home: _isLogin ? BottomOverviewScreen.routeName : LoginScreen.routeName,
     );
   }
 }

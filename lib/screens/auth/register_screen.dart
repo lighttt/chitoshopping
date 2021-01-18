@@ -1,5 +1,4 @@
 import 'package:chito_shopping/provider/auth_provider.dart';
-import 'package:chito_shopping/screens/auth/login_screen.dart';
 import 'package:chito_shopping/theme/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

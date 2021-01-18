@@ -83,122 +83,102 @@ class HomeScreen extends StatelessWidget {
     final flashSales = productsProvider.flashSaleProducts;
     final newSales = productsProvider.newProducts;
     return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.only(top: 20),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: [
-              Container(
-                height: mHeight * 0.06,
-                child: TextField(
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      labelText: "Search",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20))),
-                ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          children: [
+            SizedBox(
+              height: mHeight * 0.015,
+            ),
+            HomeCarouselWidget(),
+            SizedBox(
+              height: mHeight * 0.03,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _getCategoryItems(
+                    color: themeConst.primaryColor,
+                    icon: FontAwesomeIcons.tshirt,
+                    title: "Clothing",
+                    onPress: () {
+                      Navigator.pushNamed(context, ProductListScreen.routeName,
+                          arguments: {"type": "Clothing", "diff": "category"});
+                    }),
+                _getCategoryItems(
+                    color: Colors.green,
+                    icon: FontAwesomeIcons.laptop,
+                    title: "Electronics",
+                    onPress: () {
+                      Navigator.pushNamed(context, ProductListScreen.routeName,
+                          arguments: {
+                            "type": "Electronics",
+                            "diff": "category"
+                          });
+                    }),
+                _getCategoryItems(
+                    color: Colors.blue,
+                    icon: FontAwesomeIcons.couch,
+                    title: "Furniture",
+                    onPress: () {
+                      Navigator.pushNamed(context, ProductListScreen.routeName,
+                          arguments: {"type": "Furniture", "diff": "category"});
+                    }),
+                _getCategoryItems(
+                    color: Colors.purple,
+                    icon: FontAwesomeIcons.baseballBall,
+                    title: "Sports",
+                    onPress: () {
+                      Navigator.pushNamed(context, ProductListScreen.routeName,
+                          arguments: {"type": "Sports", "diff": "category"});
+                    }),
+              ],
+            ),
+            SizedBox(
+              height: mHeight * 0.03,
+            ),
+            _getTitleWidget(
+                title: "Flash Sale",
+                onPress: () {
+                  Navigator.pushNamed(context, ProductListScreen.routeName,
+                      arguments: {"type": "Flash Sale", "diff": "type"});
+                }),
+            Container(
+              height: mHeight * 0.22,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(10),
+                scrollDirection: Axis.horizontal,
+                itemCount: flashSales.length,
+                itemBuilder: (ctx, index) {
+                  return ProductItem(
+                    id: flashSales[index].id,
+                  );
+                },
               ),
-              SizedBox(
-                height: mHeight * 0.015,
+            ),
+            SizedBox(
+              height: mHeight * 0.02,
+            ),
+            _getTitleWidget(
+                title: "New Product",
+                onPress: () {
+                  Navigator.pushNamed(context, ProductListScreen.routeName,
+                      arguments: {"type": "New Product", "diff": "type"});
+                }),
+            Container(
+              height: mHeight * 0.22,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(10),
+                scrollDirection: Axis.horizontal,
+                itemCount: newSales.length,
+                itemBuilder: (ctx, index) {
+                  return ProductItem(
+                    id: newSales[index].id,
+                  );
+                },
               ),
-              HomeCarouselWidget(),
-              SizedBox(
-                height: mHeight * 0.03,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _getCategoryItems(
-                      color: themeConst.primaryColor,
-                      icon: FontAwesomeIcons.tshirt,
-                      title: "Clothing",
-                      onPress: () {
-                        Navigator.pushNamed(
-                            context, ProductListScreen.routeName, arguments: {
-                          "type": "Clothing",
-                          "diff": "category"
-                        });
-                      }),
-                  _getCategoryItems(
-                      color: Colors.green,
-                      icon: FontAwesomeIcons.laptop,
-                      title: "Electronics",
-                      onPress: () {
-                        Navigator.pushNamed(
-                            context, ProductListScreen.routeName, arguments: {
-                          "type": "Electronics",
-                          "diff": "category"
-                        });
-                      }),
-                  _getCategoryItems(
-                      color: Colors.blue,
-                      icon: FontAwesomeIcons.couch,
-                      title: "Furniture",
-                      onPress: () {
-                        Navigator.pushNamed(
-                            context, ProductListScreen.routeName, arguments: {
-                          "type": "Furniture",
-                          "diff": "category"
-                        });
-                      }),
-                  _getCategoryItems(
-                      color: Colors.purple,
-                      icon: FontAwesomeIcons.baseballBall,
-                      title: "Sports",
-                      onPress: () {
-                        Navigator.pushNamed(
-                            context, ProductListScreen.routeName,
-                            arguments: {"type": "Sports", "diff": "category"});
-                      }),
-                ],
-              ),
-              SizedBox(
-                height: mHeight * 0.03,
-              ),
-              _getTitleWidget(
-                  title: "Flash Sale",
-                  onPress: () {
-                    Navigator.pushNamed(context, ProductListScreen.routeName,
-                        arguments: {"type": "Flash Sale", "diff": "type"});
-                  }),
-              Container(
-                height: mHeight * 0.22,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(10),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: flashSales.length,
-                  itemBuilder: (ctx, index) {
-                    return ProductItem(
-                      id: flashSales[index].id,
-                    );
-                  },
-                ),
-              ),
-              SizedBox(
-                height: mHeight * 0.02,
-              ),
-              _getTitleWidget(
-                  title: "New Product",
-                  onPress: () {
-                    Navigator.pushNamed(context, ProductListScreen.routeName,
-                        arguments: {"type": "New Product", "diff": "type"});
-                  }),
-              Container(
-                height: mHeight * 0.22,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(10),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: newSales.length,
-                  itemBuilder: (ctx, index) {
-                    return ProductItem(
-                      id: newSales[index].id,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -138,6 +138,11 @@ class Products with ChangeNotifier {
   Future<void> fetchAllProducts() async {
     try {
       final response = await http.get(API.products + "?auth=$_token");
+      print(response.body);
+      final checkAuth = json.decode(response.body) as Map<String, dynamic>;
+      if (checkAuth.containsKey("error")) {
+        throw HttpException("Auth Expired, Please Relogin");
+      }
       final allMap = json.decode(response.body) as Map<String, dynamic>;
 
       //fetch favourite api also
@@ -164,7 +169,7 @@ class Products with ChangeNotifier {
       _products = allProducts;
       notifyListeners();
     } catch (error) {
-      print(error);
+      print("the error is $error");
       throw (error);
     }
   }
@@ -280,5 +285,17 @@ class Products with ChangeNotifier {
       print(error);
       throw (error);
     }
+  }
+
+  // get search results according to query
+  List<Product> getSearchItems(String query) {
+    if (query.isNotEmpty && query != null) {
+      notifyListeners();
+      return _products
+          .where((prod) => prod.title.toLowerCase().startsWith(query))
+          .toList();
+    }
+    notifyListeners();
+    return [];
   }
 }

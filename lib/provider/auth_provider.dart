@@ -156,8 +156,8 @@ class AuthProvider with ChangeNotifier {
       _authTimer.cancel();
       _authTimer = null;
     }
-    final timeToExpire = _expiryDate.difference(DateTime.now()).inSeconds;
-    _authTimer = Timer(Duration(seconds: timeToExpire), logout);
+    final timeToExpire = _expiryDate.difference(DateTime.now()).inHours;
+    _authTimer = Timer(Duration(hours: timeToExpire), logout);
   }
 
   // auto login user
@@ -168,7 +168,10 @@ class AuthProvider with ChangeNotifier {
     }
     final extractedData =
         json.decode(prefs.getString("userData")) as Map<String, Object>;
+    print("the extractedData is $extractedData");
+
     final expiryDate = DateTime.parse(extractedData["expiryDate"]);
+    print("the expiryDate is $expiryDate");
     if (expiryDate.isBefore(DateTime.now())) {
       return false;
     }

@@ -85,13 +85,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  custom_splash:
-    dependency: "direct main"
-    description:
-      name: custom_splash
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.2"
   fake_async:
     dependency: transitive
     description:
