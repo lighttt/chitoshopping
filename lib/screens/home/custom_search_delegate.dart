@@ -34,7 +34,8 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    final searchItems = Provider.of<Products>(context).getSearchItems(query);
+    final searchItems =
+        Provider.of<Products>(context, listen: false).getSearchItems(query);
     return query.isEmpty
         ? Center(child: Text("Search your products"))
         : searchItems.length > 0
@@ -56,7 +57,8 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final searchItems = Provider.of<Products>(context).getSearchItems(query);
+    final searchItems =
+        Provider.of<Products>(context, listen: false).getSearchItems(query);
     return query.isEmpty
         ? Center(child: Text("Search your products"))
         : ListView.builder(

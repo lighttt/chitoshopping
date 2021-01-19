@@ -33,14 +33,21 @@ class ProductItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12)),
-                  child: Image.network(
-                    loadedProduct.imageURL,
-                    fit: BoxFit.cover,
-                    height: mHeight * 0.12,
+                Hero(
+                  tag: 'product${loadedProduct.id}',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12)),
+                    child: FadeInImage(
+                      placeholder: AssetImage("assets/images/placeholder.png"),
+                      fadeInCurve: Curves.bounceInOut,
+                      image: NetworkImage(
+                        loadedProduct.imageURL,
+                      ),
+                      fit: BoxFit.cover,
+                      height: mHeight * 0.12,
+                    ),
                   ),
                 ),
                 Container(
