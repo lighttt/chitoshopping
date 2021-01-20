@@ -100,6 +100,8 @@ class CartItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(title,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
                             style: themeConst.textTheme.subtitle1
                                 .copyWith(fontSize: 18)),
                         SizedBox(

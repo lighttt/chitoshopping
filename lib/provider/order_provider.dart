@@ -21,10 +21,16 @@ class OrderItem {
 }
 
 class Orders with ChangeNotifier {
-  final String _token;
-  final String _userId;
+  String _token;
+  String _userId;
 
   Orders(this._token, this._userId);
+
+  /// setting token and user id
+  void setTokenAndId(String token, String userId) {
+    _token = token;
+    _userId = userId;
+  }
 
   List<OrderItem> _orders = [];
 

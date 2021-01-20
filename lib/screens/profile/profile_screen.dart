@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chito_shopping/provider/auth_provider.dart';
 import 'package:chito_shopping/screens/auth/login_screen.dart';
 import 'package:chito_shopping/screens/profile/order_screen.dart';
+import 'package:chito_shopping/theme/custom_route_transition.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -128,7 +129,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ]),
                   ListTile(
                     onTap: () {
-                      Navigator.pushNamed(context, OrderScreen.routeName);
+                      Navigator.push(context,
+                          CustomPageRoute(builder: (ctx) => OrderScreen()));
                     },
                     leading: Icon(
                       FontAwesomeIcons.boxes,

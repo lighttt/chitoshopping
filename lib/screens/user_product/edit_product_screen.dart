@@ -42,6 +42,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           content: Text("Please add a product image"),
           backgroundColor: themeConst.errorColor,
         ));
+        return;
       }
     } else {
       if (_imageFile == null && _editProduct.imageURL.isEmpty) {
@@ -49,6 +50,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           content: Text("Please add a product image"),
           backgroundColor: themeConst.errorColor,
         ));
+        return;
       }
     }
     if (isValid) {
@@ -75,7 +77,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       if (_id != null) {
         print("reached here 2");
         await Provider.of<Products>(context, listen: false)
-            .updateProduct(_id, newProduct, _imageFile);
+            .updateProduct(_id, newProduct, _editProduct.imageURL, _imageFile);
       } else {
         print("reached here 3");
         await Provider.of<Products>(context, listen: false)
@@ -131,12 +133,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
         _imageFile,
         fit: BoxFit.cover,
       );
-    } else if (_editProduct.imageURL.isNotEmpty &&
-        _editProduct.imageURL != null) {
-      return Image.network(
-        _editProduct.imageURL,
-        fit: BoxFit.cover,
-      );
+    } else if (_editProduct.imageURL != null) {
+      if (_editProduct.imageURL.isNotEmpty) {
+        return Image.network(
+          _editProduct.imageURL,
+          fit: BoxFit.cover,
+        );
+      } else {
+        return Center(
+            child: Text(
+          "Upload product picture",
+          textAlign: TextAlign.center,
+        ));
+      }
     } else {
       return Center(
           child: Text(

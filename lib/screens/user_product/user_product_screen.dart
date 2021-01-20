@@ -16,6 +16,7 @@ class UserProductScreen extends StatelessWidget {
     themeConst = Theme.of(context);
     final productsProvider = Provider.of<Products>(context);
     final userProducts = productsProvider.userProducts;
+    print(userProducts);
     return userProducts.length == 0
         ? Center(
             child: Text(
