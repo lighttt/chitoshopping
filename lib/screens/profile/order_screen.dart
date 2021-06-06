@@ -92,25 +92,6 @@ class _OrderScreenState extends State<OrderScreen>
                         );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _showAnimation = true;
-          });
-        },
-        child: AnimatedOpacity(
-          duration: Duration(seconds: 2),
-          curve: Curves.bounceInOut,
-          opacity: _opacityAnimation.value,
-          // height: _showAnimation ? 60 : 50,
-          // width: _showAnimation ? 60 : 50,
-          // color: Colors.white,
-          child: Icon(
-            Icons.favorite,
-            color: Colors.red,
-          ),
-        ),
-      ),
     );
   }
 }
