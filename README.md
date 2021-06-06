@@ -1,6 +1,6 @@
 # Chito Shopping 
 
-A simple ecommerce flutter application made using Firebase. 
+A simple ecommerce flutter application made using Firebase. Inspired by the design: https://www.behance.net/gallery/83606247/Kino-Ecommerce-App-UI-Kit
 
 ## Features
 
